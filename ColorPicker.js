@@ -334,7 +334,7 @@ module.exports = class ColorPicker extends Component {
 	}
 	onSquareLayout = (e) => {
 		let {x, y, width, height} = e.nativeEvent.layout
-		this.wheelWidth = Math.min(width, height)
+		this.wheelWidth = width;
 		this.tryForceUpdate()
 	}
 	onWheelLayout = (e) => {
@@ -436,7 +436,8 @@ module.exports = class ColorPicker extends Component {
 	}
 	update = (color, who, max, force) => {
 		const isHex = /^#(([0-9a-f]{2}){3}|([0-9a-f]){3})$/i
-		if (!isHex.test(color)) color = '#ffffff'
+		if (!isHex.test(color)) return; 
+		// color = '#ffffff'
 		color = expandColor(color);
 		const specific = (typeof who == 'string'), who_hs = (who=='hs'), who_v = (who=='v')
 		let {h, s, v} = (typeof color == 'string') ? hex2Hsv(color) : color, stt = {}
@@ -466,6 +467,8 @@ module.exports = class ColorPicker extends Component {
 		}
 	}
 	animate = (color, who, max, force) => {
+		const isHex = /^#(([0-9a-f]{2}){3}|([0-9a-f]){3})$/i
+		if (!isHex.test(color)) return; 
 		color = expandColor(color);
 		const specific = (typeof who == 'string'), who_hs = (who=='hs'), who_v = (who=='v')
 		let {h, s, v} = (typeof color == 'string') ? hex2Hsv(color) : color, stt = {}
@@ -569,7 +572,7 @@ module.exports = class ColorPicker extends Component {
 			left: row?0:this.slideX,
 			top: row?this.slideY:0,
 			// transform: [row?{translateX:8}:{translateY:8}],
-			backgroundColor: this.props.shadeSliderThumb === true ? hsv: hex,
+			backgroundColor: this.props.shadeWheelThumb === true ? hsv: hex,
 			borderRadius: sliderSize/2,
 			height: sliderSize,
 			width: sliderSize,
@@ -603,7 +606,7 @@ module.exports = class ColorPicker extends Component {
 					{ this.wheelWidth>0 && <View style={[{padding:thumbSize/2,width:this.wheelWidth,height:this.wheelWidth}]}>
 						<View style={[ss.wheelWrap]}>
 							<Image style={ss.wheelImg} source={srcWheel} />
-							<Animated.View style={[ss.wheelThumb,wheelThumbStyle,Elevations[4],{pointerEvents:'none'}]} />
+							{!!this.props.color && <Animated.View style={[ss.wheelThumb,wheelThumbStyle,Elevations[4],{pointerEvents:'none'}]} />}
 							<View style={[ss.cover]} onLayout={this.onWheelLayout} {...wheelPanHandlers} ref={r => { this.wheel = r }}></View>
 						</View>
 					</View> }
